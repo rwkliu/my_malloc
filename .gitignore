@@ -1,0 +1,14 @@
+# prog
+my_malloc
+a.out
+*.o
+*.dSYM
+
+# vim stuff
+*.swo
+*.swa
+*.swp
+*.vim
+
+# other
+tags
