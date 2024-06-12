@@ -14,9 +14,9 @@ void *my_malloc(int size)
         0,                        // address
         size,                     // length of mem
         PROT_READ | PROT_WRITE,   // protections
-        MAP_ANON | MAP_PRIVATE,   // flags
-        -1,                       // fd
-        0                         // offset
+        MAP_ANON | MAP_PRIVATE,   // flags: anonymous: no connection to fd; private: no other proc access
+        -1,                       // fd: -1 maps anonymous mem not tied to an fd
+        0                         // offset: unneccessary when anonymous mapping into memory
     );
 
 }
