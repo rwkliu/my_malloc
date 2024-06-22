@@ -13,7 +13,7 @@ my_malloc.o: my_malloc.c
 	cc $(CFLAGS) -c $(PROG).c
 
 clean:
-	rm -f a.out *.o
+	rm -rf a.out *.o *.dSYM
 
 fclean: clean
 	rm -f $(PROG)

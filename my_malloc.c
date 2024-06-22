@@ -5,28 +5,35 @@
 /*
  * my_malloc.c
  *
- * mmap: void *mmap(void *addr, size_t len, int prot, int flags, int fd, off_t offset);
  */
+
+typedef struct block {
+    int size;
+    int is_used;                                  /* 1 for in use, 0 for free */
+}
+
+#define BLOCKSIZE 512
+
+// use static variables for state preservation between calls
 
 void *my_malloc(int size)
 {
-    return mmap(
-        0,                        // address
-        size,                     // length of mem
-        PROT_READ | PROT_WRITE,   // protections
-        MAP_ANON | MAP_PRIVATE,   // flags: anonymous: no connection to fd; private: no other proc access
-        -1,                       // fd: -1 maps anonymous mem not tied to an fd
-        0                         // offset: unneccessary when anonymous mapping into memory
-    );
+    if (size == 0)
+        return NULL;
+
+    // init free list and meta data list
+        // if list is NULL mmap for more memory
+
+    // traverse free list
+        // no good free block? mmap for more
 
 }
 
-int main(void)
-{
-    char *src = "hello";
-    char *dest = my_malloc(strlen(src) + 1);
-
-    strcpy(dest, src);
-    printf("%s\n", dest);
-    return 0;
-}
+/*
+ * functions to write:
+ * - find_free_block
+ * - get_chunk
+ *      remember to append to end of free_list
+ * - split_blocks
+ * - merge adjacdent blocks (optional)
+ */
