@@ -5,6 +5,7 @@
 /*
  * my_malloc.c
  *
+ * method: store memory pool metadata
  */
 
 typedef struct block {
