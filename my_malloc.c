@@ -20,11 +20,11 @@ typedef struct block {
     char data[1];                            /* placeholder for user's memory */
 } block_t;
 
-block_t *free_list = NULL;
-
 #define BLOCKSIZE 512
 
-// use static variables for state preservation between calls
+static block_t *free_list = NULL;
+
+block_t *request_memory(int size);
 
 void *my_malloc(int size)
 {
@@ -40,10 +40,31 @@ void *my_malloc(int size)
 }
 
 /*
- * functions to write:
- * - find_free_block
- * - get_chunk
- *      remember to append to end of free_list
- * - split_blocks
- * - merge adjacdent blocks (optional)
+ * purpose: get anonymous memory from OS with mmap and setup first metadata
+ *          block
+ *    args: size is size of memory that will be mmap-ed. The size of a block
+ *          will be added to the size
+ *  method: calculate total size of memory wanted, use mmap, check for failure,
+ *          then initialize first block in memory.
+ *  return: pointer to first block or NULL if mmap fails
  */
+block_t *request_memory(int size)
+{
+    int total_size = sizeof(block_t) + size;
+    block_t *block = mmap(
+        NULL,                            /* don't start at a specific address */
+        total_size,                           /* length of the memory desired */
+        PROT_READ | PROT_WRITE,                 /* memory protections desired */
+        MAP_ANONYMOUS | MAP_PRIVATE,/* ANON: no fd; PRIVATE: no other proc access */
+        -1,                            /* fd: -1 means not tied to certain fd */
+        0                                                        /* no offset */
+    );
+    if (block == NULL)
+        return NULL;
+
+    block->size = size;
+    block->is_free = 0;
+    block->next = NULL;
+
+    return block;
+}
