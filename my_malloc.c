@@ -5,13 +5,22 @@
 /*
  * my_malloc.c
  *
- * method: store memory pool metadata
+ * method: 1. check if the free list is available. If not, mmap for memory.
+ *         2. search through free list (maybe just created) for free block
+ *         3. if nothing found in free list, mmap
+ *         block struct
+ *         request_memory
+ *         find_free_block
  */
 
 typedef struct block {
     int size;
-    int is_used;                                  /* 1 for in use, 0 for free */
+    int is_free;                                  /* 1 for free, 0 for in use */
+    struct block *next;
+    char data[1];                            /* placeholder for user's memory */
 } block_t;
+
+block_t *free_list = NULL;
 
 #define BLOCKSIZE 512
 
