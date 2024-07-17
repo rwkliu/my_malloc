@@ -5,28 +5,66 @@
 /*
  * my_malloc.c
  *
- * mmap: void *mmap(void *addr, size_t len, int prot, int flags, int fd, off_t offset);
+ * method: 1. check if the free list is available. If not, mmap for memory.
+ *         2. search through free list (maybe just created) for free block
+ *         3. if nothing found in free list, mmap
+ *         block struct
+ *         request_memory
+ *         find_free_block
  */
+
+typedef struct block {
+    int size;
+    int is_free;                                  /* 1 for free, 0 for in use */
+    struct block *next;
+    char data[1];                            /* placeholder for user's memory */
+} block_t;
+
+#define BLOCKSIZE 512
+
+static block_t *free_list = NULL;
+
+block_t *request_memory(int size);
 
 void *my_malloc(int size)
 {
-    return mmap(
-        0,                        // address
-        size,                     // length of mem
-        PROT_READ | PROT_WRITE,   // protections
-        MAP_ANON | MAP_PRIVATE,   // flags: anonymous: no connection to fd; private: no other proc access
-        -1,                       // fd: -1 maps anonymous mem not tied to an fd
-        0                         // offset: unneccessary when anonymous mapping into memory
-    );
+    if (size == 0)
+        return NULL;
+
+    // init free list and meta data list
+        // if list is NULL mmap for more memory
+
+    // traverse free list
+        // no good free block? mmap for more
 
 }
 
-int main(void)
+/*
+ * purpose: get anonymous memory from OS with mmap and setup first metadata
+ *          block
+ *    args: size is size of memory that will be mmap-ed. The size of a block
+ *          will be added to the size
+ *  method: calculate total size of memory wanted, use mmap, check for failure,
+ *          then initialize first block in memory.
+ *  return: pointer to first block or NULL if mmap fails
+ */
+block_t *request_memory(int size)
 {
-    char *src = "hello";
-    char *dest = my_malloc(strlen(src) + 1);
+    int total_size = sizeof(block_t) + size;
+    block_t *block = mmap(
+        NULL,                            /* don't start at a specific address */
+        total_size,                           /* length of the memory desired */
+        PROT_READ | PROT_WRITE,                 /* memory protections desired */
+        MAP_ANONYMOUS | MAP_PRIVATE,/* ANON: no fd; PRIVATE: no other proc access */
+        -1,                            /* fd: -1 means not tied to certain fd */
+        0                                                        /* no offset */
+    );
+    if (block == NULL)
+        return NULL;
 
-    strcpy(dest, src);
-    printf("%s\n", dest);
-    return 0;
+    block->size = size;
+    block->is_free = 0;
+    block->next = NULL;
+
+    return block;
 }
