@@ -8,6 +8,9 @@
  * method: 1. check if the free list is available. If not, mmap for memory.
  *         2. search through free list (maybe just created) for free block
  *         3. if nothing found in free list, mmap
+ *         block struct
+ *         request_memory
+ *         find_free_block
  */
 
 typedef struct block {
@@ -25,14 +28,14 @@ block_t *request_memory(int size);
 
 void *my_malloc(int size)
 {
-    if (size <= 0)
+    if (size == 0)
         return NULL;
 
-    block_t *block = find_free_block(size);
-    if (block != NULL) {                                    /* if block found */
-        block->is_free = 0;
-        return (void *)block->data;      /* return data array cast as pointer */
-    }
+    // init free list and meta data list
+        // if list is NULL mmap for more memory
+
+    // traverse free list
+        // no good free block? mmap for more
 
     block = request_memory(size); /* else if block not found, get more memory */
     if (block == NULL)
