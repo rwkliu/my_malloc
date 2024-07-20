@@ -37,6 +37,11 @@ void *my_malloc(int size)
     // traverse free list
         // no good free block? mmap for more
 
+    block = request_memory(size); /* else if block not found, get more memory */
+    if (block == NULL)
+        return NULL;
+
+    return (void *)block->data;
 }
 
 /*
