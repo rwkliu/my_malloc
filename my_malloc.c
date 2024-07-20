@@ -44,6 +44,15 @@ void *my_malloc(int size)
     return (void *)block->data;
 }
 
+void *my_calloc(int count, int size) {
+    void *ptr = my_malloc(count * size);
+    if (ptr != NULL) {
+        for (int i = 0; i < count * size; i++)
+            ((char*)ptr)[i] = 0;         /* cast as char ptr to fill with 0's */
+    }
+    return ptr;
+}
+
 /*
  * purpose: get anonymous memory from OS with mmap and setup first metadata
  *          block
