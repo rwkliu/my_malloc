@@ -28,14 +28,14 @@ block_t *request_memory(int size);
 
 void *my_malloc(int size)
 {
-    if (size == 0)
+    if (size <= 0)
         return NULL;
 
-    // init free list and meta data list
-        // if list is NULL mmap for more memory
-
-    // traverse free list
-        // no good free block? mmap for more
+    block_t *block = find_free_block(size);
+    if (block != NULL) {                                    /* if block found */
+        block->is_free = 0;
+        return (void *)block->data;      /* return data array cast as pointer */
+    }
 
     block = request_memory(size); /* else if block not found, get more memory */
     if (block == NULL)
