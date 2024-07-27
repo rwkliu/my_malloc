@@ -1,19 +1,40 @@
-#
-# Makefile for my_malloc.c
-#
+TARGET_EXEC := my_malloc
+BUILD_DIR := ./build
+SRC_DIRS := ./src
+INCLUDE_DIR := -I ./include
+TEST_DIR := ./tests
 
-CFLAGS = -Wall -Werror -Wextra -g
-PROG = my_malloc
-OBJS = $(PROG).o
+# Determine the platform
+UNAME_S := $(shell uname -s)
 
-all: $(OBJS)
-	cc $(CFLAGS) $(PROG).c -o $(PROG)
+# CC
+ifeq ($(UNAME_S),Darwin)
+	CC := clang
+else
+	CC := gcc
+endif
 
-my_malloc.o: my_malloc.c
-	cc $(CFLAGS) -c $(PROG).c
+CFLAGS += $(INCLUDE_DIR)
+LDFLAGS = -Wall -Wextra -Werror -g3 -fsanitize=address
 
+# Find all C files to compile
+SRCS := $(wildcard $(SRC_DIRS)/*.c)
+
+# Prepends BUILD_DIR and appends .o to every src file
+OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
+
+# The final build step
+$(TARGET_EXEC): $(OBJS)
+	$(CC) $(OBJS) -o $@ $(LDFLAGS)
+
+# Build step for C source 
+$(BUILD_DIR)/%.c.o: %.c
+	mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+.PHONY: clean
 clean:
-	rm -rf a.out *.o *.dSYM
+	$(RM) -r $(BUILD_DIR)
 
 fclean: clean
-	rm -f $(PROG)
+	$(RM) my_malloc
