@@ -22,7 +22,7 @@ typedef struct block {
 
 #define BLOCKSIZE 512
 
-// static block_t *free_list = NULL;
+static block_t *free_list = NULL;
 
 block_t *request_memory(int size);
 
