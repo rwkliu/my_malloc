@@ -11,6 +11,8 @@ typedef struct block {
 } block_t;
 #endif
 
+extern block_t *free_list;
+
 block_t *request_memory(int size);
 block_t *find_free_block(int size);
 void *my_malloc(int size);

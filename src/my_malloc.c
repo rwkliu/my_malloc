@@ -13,16 +13,9 @@
  *         find_free_block
  */
 
-typedef struct block {
-    int size;
-    int is_free;                                  /* 1 for free, 0 for in use */
-    struct block *next;
-    char data[1];                            /* placeholder for user's memory */
-} block_t;
-
 #define BLOCKSIZE 512
 
-static block_t *free_list = NULL;
+block_t *free_list = NULL;
 
 block_t *request_memory(int size);
 
