@@ -1,6 +1,7 @@
 #include <sys/mman.h>
 #include <stdio.h>
 #include <string.h>
+#include "my_malloc.h"
 
 /*
  * my_malloc.c
@@ -23,20 +24,40 @@ block_t *find_free_block(int size);
 
 void *my_malloc(int size)
 {
-    if (size <= 0)
-        return NULL;
+    block_t *current;
+    block_t *prev;
+    int total_size = size + BLOCKSIZE;
 
-    block_t *block = find_free_block(size);
-    if (block != NULL) {                                    /* if block found */
-        block->is_free = 0;
-        return (void *)block->data;      /* return data array cast as pointer */
+    if (free_list == NULL) {
+        printf("free_list is null\n");
+        current = request_memory(BLOCKSIZE);
+        current->size = size;
+        current->next = NULL;
+        current->is_free = 0;
+        free_list = current;
+        return current->data;
     }
 
-    block = request_memory(size); /* else if block not found, get more memory */
-    if (block == NULL)
-        return NULL;
-
-    return (void *)block->data;
+    // Search for a free block
+    current = free_list;
+    while (current && !(current->is_free && current->size >= size)) {
+        printf("Checking through free_list\n");
+        prev = current;
+        current = current->next;
+    }
+    // No suitable free block, request more memory
+    if (current == NULL) {
+        printf("No free block\n");
+        current = request_memory(size);
+        current->size = size;
+        current->next = NULL;
+        current->is_free = 0;
+        return current->data;
+    } else {
+        // Use the free block
+        current->is_free = 0;
+    }
+    return current->data;
 }
 
 void *my_calloc(int count, int size) {
