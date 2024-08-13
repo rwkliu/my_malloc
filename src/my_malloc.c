@@ -35,7 +35,7 @@ void *my_malloc(int size)
         current->next = NULL;
         current->is_free = 0;
         free_list = current;
-        return current->data;
+        return (current + 1);
     }
 
     // Search for a free block
@@ -52,12 +52,12 @@ void *my_malloc(int size)
         current->size = size;
         current->next = NULL;
         current->is_free = 0;
-        return current->data;
+        return (current + 1);
     } else {
         // Use the free block
         current->is_free = 0;
     }
-    return current->data;
+    return (current + 1);
 }
 
 void *my_calloc(int count, int size) {

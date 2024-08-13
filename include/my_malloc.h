@@ -7,7 +7,6 @@ typedef struct block {
     int size;
     int is_free;
     struct block *next;
-    char data[1];
 } block_t;
 #endif
 
