@@ -74,8 +74,10 @@ void my_free(void *ptr) {
         return;
     }
 
-    // Address of the block from the data pointer
+    // Get the address of the block from the data pointer, then overwrite the 
+    // data memory with a garbage pattern
     block_t *block = (block_t *)ptr - 1;
+    memset(ptr, 0xDE, block->size);
     block->is_free = 1;
 }
 
