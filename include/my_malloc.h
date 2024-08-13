@@ -17,5 +17,7 @@ block_t *find_free_block(int size);
 void *my_malloc(int size);
 void *my_calloc(int count, int size);
 void my_free(void *ptr);
+int count_free_list_blocks();
+int check_free_blocks();
 
 #endif

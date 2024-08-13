@@ -75,8 +75,32 @@ void my_free(void *ptr) {
     }
 
     // Address of the block from the data pointer
-    block_t *block = (block_t *)((char *)ptr - BLOCKSIZE);
+    block_t *block = (block_t *)ptr - 1;
     block->is_free = 1;
+}
+
+int count_free_list_blocks() {
+    block_t *current = free_list;
+    int num = 0;
+
+    while (current) {
+        num++;
+        current = current->next;
+    }
+    return num;
+}
+
+int check_free_blocks() {
+    block_t *current = free_list;
+    
+    while (current) {
+        if (current->is_free == 1) {
+            printf("block is free\n");
+            return 1;
+        }
+        current = current->next;
+    }
+    return 0;
 }
 
 /*
