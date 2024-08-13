@@ -69,6 +69,16 @@ void *my_calloc(int count, int size) {
     return ptr;
 }
 
+void my_free(void *ptr) {
+    if (ptr == NULL) {
+        return;
+    }
+
+    // Address of the block from the data pointer
+    block_t *block = (block_t *)((char *)ptr - BLOCKSIZE);
+    block->is_free = 1;
+}
+
 /*
  * purpose: get anonymous memory from OS with mmap and setup first metadata
  *          block

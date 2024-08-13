@@ -16,5 +16,7 @@ int main() {
     printf("dest: %s\n", dest);
     printf("dest2: %s\n", dest2);
     printf("dest3: %s\n", dest3);
+
+    my_free(dest);
     return 0;
 }
