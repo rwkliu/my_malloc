@@ -14,7 +14,7 @@
  *         find_free_block
  */
 
-#define BLOCKSIZE 512
+#define BLOCKSIZE (sizeof(block_t) - sizeof(char[1]))
 
 block_t *free_list = NULL;
 
@@ -30,7 +30,7 @@ void *my_malloc(int size)
 
     if (free_list == NULL) {
         printf("free_list is null\n");
-        current = request_memory(BLOCKSIZE);
+        current = request_memory(total_size);
         current->size = size;
         current->next = NULL;
         current->is_free = 0;
@@ -48,7 +48,7 @@ void *my_malloc(int size)
     // No suitable free block, request more memory
     if (current == NULL) {
         printf("No free block\n");
-        current = request_memory(size);
+        current = request_memory(total_size);
         current->size = size;
         current->next = NULL;
         current->is_free = 0;
