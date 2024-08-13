@@ -18,5 +18,6 @@ int main() {
     strcpy(dest3, src3);
     printf("dest3: %s\n", dest3);
 
+    my_realloc(dest3, 1);
     return 0;
 }

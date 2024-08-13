@@ -69,6 +69,11 @@ void *my_calloc(int count, int size) {
     return ptr;
 }
 
+void *my_realloc(void *ptr, int size) {
+    printf("ptr length: %lu\n", strlen((char *)ptr));
+    return NULL;
+}
+
 /*
  * purpose: get anonymous memory from OS with mmap and setup first metadata
  *          block
