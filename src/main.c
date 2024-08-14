@@ -30,5 +30,12 @@ int main() {
     check_free_blocks();
     printf("num blocks: %d\n", count_free_list_blocks());
 
+    // Test 6: my_realloc (null pointer)
+    char *test_ptr = NULL;
+    char *src6 = "string #6";
+    test_ptr = my_realloc(test_ptr, strlen(src6));
+    strcpy(test_ptr, src6);
+    printf("test_ptr string: %s\n", test_ptr);
+
     return 0;
 }

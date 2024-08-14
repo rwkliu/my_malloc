@@ -71,7 +71,13 @@ void *my_calloc(int count, int size) {
 }
 
 void *my_realloc(void *ptr, int size) {
-    printf("ptr length: %lu\n", strlen((char *)ptr));
+    // If ptr is NULL, call malloc for size bytes
+    if (ptr == NULL) {
+        return my_malloc(size);
+    }
+    // If there isn't a large enough block, allocate new memory block, copy the 
+    //   data pointed to by ptr, free the old allocation, return the pointer to the
+    //   allocated memory
     return NULL;
 }
 
