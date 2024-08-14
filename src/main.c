@@ -23,6 +23,7 @@ int main() {
     printf("dest after my_free: %s\n", dest);
 
     check_free_blocks();
+    printf("num blocks: %d\n", count_free_list_blocks());
 
     return 0;
 }
