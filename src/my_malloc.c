@@ -1,6 +1,7 @@
 #include <sys/mman.h>
 #include <stdio.h>
 #include <string.h>
+#include "my_malloc.h"
 
 /*
  * my_malloc.c
@@ -13,16 +14,9 @@
  *         find_free_block
  */
 
-typedef struct block {
-    int size;
-    int is_free;                                  /* 1 for free, 0 for in use */
-    struct block *next;
-    char data[1];                            /* placeholder for user's memory */
-} block_t;
+#define BLOCKSIZE (sizeof(block_t) - sizeof(char[1]))
 
-#define BLOCKSIZE 512
-
-static block_t *free_list = NULL;
+block_t *free_list = NULL;
 
 block_t *request_memory(int size);
 
@@ -30,20 +24,40 @@ block_t *find_free_block(int size);
 
 void *my_malloc(int size)
 {
-    if (size <= 0)
-        return NULL;
+    block_t *current;
+    block_t *prev;
+    int total_size = size + BLOCKSIZE;
 
-    block_t *block = find_free_block(size);
-    if (block != NULL) {                                    /* if block found */
-        block->is_free = 0;
-        return (void *)block->data;      /* return data array cast as pointer */
+    if (free_list == NULL) {
+        printf("free_list is null\n");
+        current = request_memory(total_size);
+        current->size = size;
+        current->next = NULL;
+        current->is_free = 0;
+        free_list = current;
+        return (current + 1);
     }
 
-    block = request_memory(size); /* else if block not found, get more memory */
-    if (block == NULL)
-        return NULL;
-
-    return (void *)block->data;
+    // Search for a free block
+    current = free_list;
+    while (current && !(current->is_free && current->size >= size)) {
+        printf("Checking through free_list\n");
+        prev = current;
+        current = current->next;
+    }
+    // No suitable free block, request more memory
+    if (current == NULL) {
+        printf("No free block\n");
+        current = request_memory(total_size);
+        current->size = size;
+        current->next = NULL;
+        current->is_free = 0;
+        return (current + 1);
+    } else {
+        // Use the free block
+        current->is_free = 0;
+    }
+    return (current + 1);
 }
 
 void *my_calloc(int count, int size) {
@@ -53,6 +67,42 @@ void *my_calloc(int count, int size) {
             ((char*)ptr)[i] = 0;         /* cast as char ptr to fill with 0's */
     }
     return ptr;
+}
+
+void my_free(void *ptr) {
+    if (ptr == NULL) {
+        return;
+    }
+
+    // Get the address of the block from the data pointer, then overwrite the 
+    // data memory with a garbage pattern
+    block_t *block = (block_t *)ptr - 1;
+    memset(ptr, 0xDE, block->size);
+    block->is_free = 1;
+}
+
+int count_free_list_blocks() {
+    block_t *current = free_list;
+    int num = 0;
+
+    while (current) {
+        num++;
+        current = current->next;
+    }
+    return num;
+}
+
+int check_free_blocks() {
+    block_t *current = free_list;
+    
+    while (current) {
+        if (current->is_free == 1) {
+            printf("block is free\n");
+            return 1;
+        }
+        current = current->next;
+    }
+    return 0;
 }
 
 /*
