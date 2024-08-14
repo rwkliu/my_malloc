@@ -52,6 +52,7 @@ void *my_malloc(int size)
         current->size = size;
         current->next = NULL;
         current->is_free = 0;
+        prev->next = current;
         return (current + 1);
     } else {
         // Use the free block
