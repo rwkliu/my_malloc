@@ -37,5 +37,15 @@ int main() {
     strcpy(test_ptr, src6);
     printf("test_ptr string: %s\n", test_ptr);
 
+    // Test 7: my_realloc (allocate new sized memory block)
+    char *src7 = "string #7";
+    char *test_ptr_2 = my_malloc(strlen(src7) + 1);
+    strcpy(test_ptr_2, src7);
+    printf("test_ptr_2_string: %s\n", test_ptr_2);
+    char *src7_2 = "longer string #7";
+    test_ptr_2 = my_realloc(test_ptr_2, strlen(src7_2) + 1);
+    strcpy(test_ptr_2, src7_2);
+    printf("test_ptr_2_string after realloc: %s\n", test_ptr_2);
+
     return 0;
 }

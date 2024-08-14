@@ -76,8 +76,20 @@ void *my_realloc(void *ptr, int size) {
         return my_malloc(size);
     }
     // If there isn't a large enough block, allocate new memory block, copy the 
-    //   data pointed to by ptr, free the old allocation, return the pointer to the
-    //   allocated memory
+    //   data pointed to by ptr, free the old allocation, return the pointer to 
+    //   the allocated memory
+    block_t *block = (block_t *)ptr - 1;
+    int ptr_size = block->size;
+
+    if (ptr_size == size) {
+        printf("ptr_size == size\n");
+        return ptr;
+    } else {
+        void *new_ptr = my_malloc(size);
+        memmove(new_ptr, ptr, size);
+        my_free(ptr);
+        return new_ptr;
+    }
     return NULL;
 }
 
