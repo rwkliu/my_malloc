@@ -35,7 +35,7 @@ void *my_malloc(int size)
         current->next = NULL;
         current->is_free = 0;
         free_list = current;
-        return current->data;
+        return (current + 1);
     }
 
     // Search for a free block
@@ -52,12 +52,12 @@ void *my_malloc(int size)
         current->size = size;
         current->next = NULL;
         current->is_free = 0;
-        return current->data;
+        return (current + 1);
     } else {
         // Use the free block
         current->is_free = 0;
     }
-    return current->data;
+    return (current + 1);
 }
 
 void *my_calloc(int count, int size) {
@@ -72,6 +72,42 @@ void *my_calloc(int count, int size) {
 void *my_realloc(void *ptr, int size) {
     printf("ptr length: %lu\n", strlen((char *)ptr));
     return NULL;
+}
+
+void my_free(void *ptr) {
+    if (ptr == NULL) {
+        return;
+    }
+
+    // Get the address of the block from the data pointer, then overwrite the 
+    // data memory with a garbage pattern
+    block_t *block = (block_t *)ptr - 1;
+    memset(ptr, 0xDE, block->size);
+    block->is_free = 1;
+}
+
+int count_free_list_blocks() {
+    block_t *current = free_list;
+    int num = 0;
+
+    while (current) {
+        num++;
+        current = current->next;
+    }
+    return num;
+}
+
+int check_free_blocks() {
+    block_t *current = free_list;
+    
+    while (current) {
+        if (current->is_free == 1) {
+            printf("block is free\n");
+            return 1;
+        }
+        current = current->next;
+    }
+    return 0;
 }
 
 /*
