@@ -29,7 +29,6 @@ void *my_malloc(int size)
     int total_size = size + BLOCKSIZE;
 
     if (free_list == NULL) {
-        printf("free_list is null\n");
         current = request_memory(total_size);
         current->size = size;
         current->next = NULL;
@@ -41,13 +40,11 @@ void *my_malloc(int size)
     // Search for a free block
     current = free_list;
     while (current && !(current->is_free && current->size >= size)) {
-        printf("Checking through free_list\n");
         prev = current;
         current = current->next;
     }
     // No suitable free block, request more memory
     if (current == NULL) {
-        printf("No free block\n");
         current = request_memory(total_size);
         current->size = size;
         current->next = NULL;
@@ -82,7 +79,6 @@ void *my_realloc(void *ptr, int size) {
     int ptr_size = block->size;
 
     if (ptr_size == size) {
-        printf("ptr_size == size\n");
         return ptr;
     } else {
         void *new_ptr = my_malloc(size);
