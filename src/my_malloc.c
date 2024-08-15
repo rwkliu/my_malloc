@@ -29,7 +29,6 @@ void *my_malloc(int size)
     int total_size = size + BLOCKSIZE;
 
     if (free_list == NULL) {
-        printf("free_list is null\n");
         current = request_memory(total_size);
         current->size = size;
         current->next = NULL;
@@ -41,17 +40,16 @@ void *my_malloc(int size)
     // Search for a free block
     current = free_list;
     while (current && !(current->is_free && current->size >= size)) {
-        printf("Checking through free_list\n");
         prev = current;
         current = current->next;
     }
     // No suitable free block, request more memory
     if (current == NULL) {
-        printf("No free block\n");
         current = request_memory(total_size);
         current->size = size;
         current->next = NULL;
         current->is_free = 0;
+        prev->next = current;
         return (current + 1);
     } else {
         // Use the free block
@@ -67,6 +65,28 @@ void *my_calloc(int count, int size) {
             ((char*)ptr)[i] = 0;         /* cast as char ptr to fill with 0's */
     }
     return ptr;
+}
+
+void *my_realloc(void *ptr, int size) {
+    // If ptr is NULL, call malloc for size bytes
+    if (ptr == NULL) {
+        return my_malloc(size);
+    }
+    // If there isn't a large enough block, allocate new memory block, copy the 
+    //   data pointed to by ptr, free the old allocation, return the pointer to 
+    //   the allocated memory
+    block_t *block = (block_t *)ptr - 1;
+    int ptr_size = block->size;
+
+    if (ptr_size == size) {
+        return ptr;
+    } else {
+        void *new_ptr = my_malloc(size);
+        memmove(new_ptr, ptr, size);
+        my_free(ptr);
+        return new_ptr;
+    }
+    return NULL;
 }
 
 void my_free(void *ptr) {
