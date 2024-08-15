@@ -17,10 +17,7 @@
 #define BLOCKSIZE (sizeof(block_t) - sizeof(char[1]))
 
 block_t *free_list = NULL;
-
 block_t *request_memory(int size);
-
-block_t *find_free_block(int size);
 
 void *my_malloc(int size)
 {
@@ -153,11 +150,4 @@ block_t *request_memory(int size)
     block->next = NULL;
 
     return block;
-}
-
-block_t *find_free_block(int size) {
-    if (size <= 0) {
-        return NULL;
-    }
-    return NULL;
 }
