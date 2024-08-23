@@ -46,6 +46,8 @@ int main() {
     test_ptr_2 = my_realloc(test_ptr_2, strlen(src7_2) + 1);
     strcpy(test_ptr_2, src7_2);
     printf("test_ptr_2_string after realloc: %s\n", test_ptr_2);
+    my_free(test_ptr_2);
+    printf("test_ptr_2_string after free: %s\n", test_ptr_2);
 
     return 0;
 }
