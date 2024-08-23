@@ -94,7 +94,7 @@ void my_free(void *ptr) {
     // Get the address of the block from the data pointer, then overwrite the 
     // data memory with a garbage pattern
     block_t *block = (block_t *)ptr - 1;
-    memset(ptr, 0xDE, block->size);
+    memset(ptr, 0, block->size);
     block->is_free = 1;
 }
 
